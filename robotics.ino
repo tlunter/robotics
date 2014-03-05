@@ -39,5 +39,9 @@ void loop(void)
     case B0001:
       robot->turn_right();
     break;
+
+    default:
+      robot->break();
+    break;
   }
 }
