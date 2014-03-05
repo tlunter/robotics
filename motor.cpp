@@ -10,6 +10,9 @@ Motor::Motor(int direction, int pwm, int brake, int sensing) :
     digitalWrite(this->brake, LOW);
 }
 
+/* Simple forward / backward function for individual motor
+ * Input: (int) pwm  ::  between -255 & +255
+ */
 void Motor::drive(int pwm) {
     bool dir = (pwm > 0) ? LOW : HIGH;
     digitalWrite(this->direction, dir);
