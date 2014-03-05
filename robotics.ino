@@ -4,6 +4,7 @@
 Motor *a;
 Motor *b;
 Robot *robot;
+LedArray *ledArray;
 
 void setup(void)
 {
@@ -12,6 +13,7 @@ void setup(void)
   a = new Motor(12, 3, 9, A0);
   b = new Motor(13, 11, 8, A1);
   robot = new Robot(a, b);
+  ledArray = new LedArray(4);
 }
 
 void loop(void)
