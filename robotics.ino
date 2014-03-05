@@ -18,16 +18,26 @@ void setup(void)
 
 void loop(void)
 {
-  robot->forward();
-  delay(3000);
-  robot->backward();
-  delay(3000);
-  robot->turn_left();
-  delay(3000);
-  robot->turn_right();
-  delay(3000);
-  robot->slight_left();
-  delay(3000);
-  robot->slight_right();
-  delay(3000);
+  switch(ledArray->isTape())
+  {
+    case B1000:
+      robot->turn_left();
+    break;
+
+    case B1100:
+      robot->slight_left();
+    break;
+
+    case B0110:
+      robot->forward();
+    break;
+
+    case B0011:
+      robot->slight_right();
+    break;
+
+    case B0001:
+      robot->turn_right();
+    break;
+  }
 }
