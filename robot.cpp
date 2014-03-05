@@ -15,6 +15,11 @@ void Robot::backward() {
     this->b->drive(-255);
 }
 
+void Robot::stop() {
+    this->a->drive(0);
+    this->b->drive(0);
+}
+
 void Robot::turn_left() {
     this->a->drive(255);
     this->b->drive(-255);
