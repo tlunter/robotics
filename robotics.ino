@@ -1,5 +1,6 @@
 #include "motor.h"
 #include "robot.h"
+#include "led_array.h"
 
 Motor *a;
 Motor *b;
@@ -41,7 +42,7 @@ void loop(void)
     break;
 
     default:
-      robot->break();
+      robot->stop();
     break;
   }
 }

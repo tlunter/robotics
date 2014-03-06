@@ -15,7 +15,7 @@ class LedArray {
         int floor_average[LED_SENSOR_COUNT];
         void init();
         int* sense();
-        bool* isTape();
+        char isTape();
 };
 
 #endif
