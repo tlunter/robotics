@@ -6,13 +6,13 @@ Robot::Robot(Motor *motor_a, Motor *motor_b) :
 }
 
 void Robot::forward() {
-    this->a->drive(255);
-    this->b->drive(255);
+    this->a->drive(180);
+    this->b->drive(180);
 }
 
 void Robot::backward() {
-    this->a->drive(-255);
-    this->b->drive(-255);
+    this->a->drive(-180);
+    this->b->drive(-180);
 }
 
 void Robot::stop() {
@@ -21,21 +21,21 @@ void Robot::stop() {
 }
 
 void Robot::turn_left() {
-    this->a->drive(255);
-    this->b->drive(-255);
+    this->a->drive(180);
+    this->b->drive(-180);
 }
 
 void Robot::turn_right() {
-    this->a->drive(-255);
-    this->b->drive(255);
-}
-
-void Robot::slight_left() {
-    this->a->drive(255);
+    this->a->drive(-180);
     this->b->drive(180);
 }
 
-void Robot::slight_right() {
+void Robot::slight_left() {
     this->a->drive(180);
-    this->b->drive(255);
+    this->b->drive(120);
+}
+
+void Robot::slight_right() {
+    this->a->drive(120);
+    this->b->drive(180);
 }
