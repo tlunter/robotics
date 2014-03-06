@@ -15,49 +15,56 @@ LedArray::LedArray(int pin1, int pin2, int pin3, int pin4) {
 }
 
 void LedArray::init() {
+    this->floor_average = new int[LED_SENSOR_COUNT]();
+
     for (int j = 0; j < LED_SAMPLE_COUNT; j++) {
-        for (int i = 0; i < LED_SENSOR_COUNT; i++) {
-            this->floor_average[i] += analogRead(sensor_pins[i]);
-        }
+        this->sense(this->floor_average);
+        delay(100);
     }
 
+    Serial.println("Calibration");
     for (int i = 0; i < LED_SENSOR_COUNT; i++) {
         this->floor_average[i] = this->floor_average[i] / LED_SAMPLE_COUNT;
+        Serial.print(this->floor_average[i]);
+        Serial.print("\t");
     }
+    Serial.println("");
 }
 
-int* LedArray::sense() {
-    int values[LED_SENSOR_COUNT] = {0};
+void LedArray::sense(int *values) {
     for (int i = 0; i < LED_SENSOR_COUNT; i++) {
-        values[i] = analogRead(this->sensor_pins[i]);
+        values[i] += analogRead(this->sensor_pins[i]);
     }
-    return values;
 }
 
 char LedArray::isTape() {
-    int *values = this->sense();
-    for (int i = 0; i < 3; i++)
-    {
-      int *newValues = this->sense();
-      for (int j = 0; j < LED_SENSOR_COUNT; j++)
-      {
-        values[j] += newValues[j];
-      }
+    int *values = new int[LED_SENSOR_COUNT]();
+
+    for (int i = 0; i < 4; i++) {
+        this->sense(values);
     }
-    for (int i = 0; i < LED_SENSOR_COUNT; i++)
-    {
-      values[i] = values[i] / 4;
+
+    for (int i = 0; i < LED_SENSOR_COUNT; i++) {
+        values[i] = values[i] / 4;
     }
 
     char ret = 0;
 
+    Serial.println("Sensor values");
     for (int i = 0; i < LED_SENSOR_COUNT; i++) {
-        if (values[i] > (this->floor_average[i] * LED_TAPE_FACTOR)) {
+        if (values[i] < (this->floor_average[i] * LED_TAPE_FACTOR)) {
+            Serial.print(values[i]);
+            Serial.print("\t");
             ret = (ret << 1) + 1;
         } else {
+            Serial.print(values[i]);
+            Serial.print("\t");
             ret = (ret << 1);
         }
     }
+    Serial.println();
+
+    delete[] values;
 
     return ret;
 }
