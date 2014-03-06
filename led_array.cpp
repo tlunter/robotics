@@ -36,6 +36,18 @@ int* LedArray::sense() {
 
 char LedArray::isTape() {
     int *values = this->sense();
+    for (int i = 0; i < 3; i++)
+    {
+      int *newValues = this->sense();
+      for (int j = 0; j < LED_SENSOR_COUNT; j++)
+      {
+        values[j] += newValues[j];
+      }
+    }
+    for (int i = 0; i < LED_SENSOR_COUNT; i++)
+    {
+      values[i] = values[i] / 4;
+    }
 
     char ret = 0;
 
