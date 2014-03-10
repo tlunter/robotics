@@ -25,27 +25,48 @@ void loop(void)
 {
   switch(ledArray->isTape())
   {
-    case B1000:
+    
+    case B10000:
+    case B11000:
+    case B10100:
+    case B11100:
+    case B10010:
+    case B11010:
+    case B10110:
+    case B11110:
       Serial.println("Turning left");
       robot->turn_left();
     break;
 
-    case B1100:
+    case B01000:
+    case B01100:
       Serial.println("Slight left");
       robot->slight_left();
     break;
 
-    case B0110:
+    
+    case B00100:
+    case B01010:
+    case B01110:
       Serial.println("Forward");
       robot->forward();
     break;
 
-    case B0011:
+    case B00010:
+    case B00110:
       Serial.println("Slight right");
       robot->slight_right();
     break;
 
-    case B0001:
+    
+    case B00001:
+    case B00011:
+    case B00101:
+    case B00111:
+    case B01001:
+    case B01011:
+    case B01101:
+    case B01111:
       Serial.println("Turning right");
       robot->turn_right();
     break;

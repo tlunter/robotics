@@ -7,11 +7,12 @@ LedArray::LedArray(int pin) {
     }
 }
 
-LedArray::LedArray(int pin1, int pin2, int pin3, int pin4) {
+LedArray::LedArray(int pin1, int pin2, int pin3, int pin4, int pin5) {
     this->sensor_pins[0] = pin1;
     this->sensor_pins[1] = pin2;
     this->sensor_pins[2] = pin3;
     this->sensor_pins[3] = pin4;
+    this->sensor_pins[4] = pin5;
 }
 
 void LedArray::init() {
@@ -40,12 +41,12 @@ void LedArray::sense(int *values) {
 char LedArray::isTape() {
     int *values = new int[LED_SENSOR_COUNT]();
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < LED_SENSOR_COUNT; i++) {
         this->sense(values);
     }
 
     for (int i = 0; i < LED_SENSOR_COUNT; i++) {
-        values[i] = values[i] / 4;
+        values[i] = values[i] / LED_SENSOR_COUNT;
     }
 
     char ret = 0;
