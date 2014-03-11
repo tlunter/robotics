@@ -6,6 +6,7 @@ Motor *a;
 Motor *b;
 Robot *robot;
 LedArray *ledArray;
+bool seenTape;
 
 void setup(void)
 {
@@ -19,13 +20,14 @@ void setup(void)
   ledArray = new LedArray(A2);
   delay(1000);
   ledArray->init();
+
+  seenTape = false;
 }
 
 void loop(void)
 {
   switch(ledArray->isTape())
   {
-    
     case B10000:
     case B11000:
     case B10100:
@@ -36,28 +38,31 @@ void loop(void)
     case B11110:
       Serial.println("Turning left");
       robot->turn_left();
+      seenTape = true;
     break;
 
     case B01000:
     case B01100:
       Serial.println("Slight left");
       robot->slight_left();
+      seenTape = true;
     break;
-
     
     case B00100:
     case B01010:
     case B01110:
+    case B11111:
       Serial.println("Forward");
       robot->forward();
+      seenTape = true;
     break;
 
     case B00010:
     case B00110:
       Serial.println("Slight right");
       robot->slight_right();
+      seenTape = true;
     break;
-
     
     case B00001:
     case B00011:
@@ -69,11 +74,20 @@ void loop(void)
     case B01111:
       Serial.println("Turning right");
       robot->turn_right();
+      seenTape = true;
     break;
 
     default:
-      Serial.println("Stop");
-      robot->stop();
+      if (seenTape)
+      {
+          Serial.println("Keep doing last");
+          robot->stop();
+      }
+      else
+      {
+          Serial.println("Go");
+          robot->forward();
+      }
     break;
   }
   delay(50);
