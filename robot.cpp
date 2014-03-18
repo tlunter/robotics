@@ -1,8 +1,8 @@
 #include "motor.h"
 #include "robot.h"
 
-#define FAST_SPEED 255
-#define LOW_SPEED 180
+#define FAST_SPEED 130
+#define LOW_SPEED 90
 
 Robot::Robot(Motor *motor_a, Motor *motor_b) : 
     a(motor_a), b(motor_b) {

@@ -39,12 +39,17 @@ void loop(void)
       Serial.println("Turning left");
       robot->turn_left();
       seenTape = true;
+      
+      // if far left LED is tripped, turn left until it un-trips
+      while (ledArray->isTape() > 16) {
+        robot->turn_left();
+      }
     break;
 
     case B01000:
     case B01100:
-      Serial.println("Slight left");
-      robot->slight_left();
+      Serial.println("Turn left");
+      robot->turn_left();
       seenTape = true;
     break;
     
@@ -59,8 +64,8 @@ void loop(void)
 
     case B00010:
     case B00110:
-      Serial.println("Slight right");
-      robot->slight_right();
+      Serial.println("Turn right");
+      robot->turn_right();
       seenTape = true;
     break;
     
@@ -75,13 +80,18 @@ void loop(void)
       Serial.println("Turning right");
       robot->turn_right();
       seenTape = true;
+                  
+      // if far right LED is tripped, turn right until it un-trips
+      while (ledArray->isTape() % 2) {
+        robot->turn_right();
+      }
     break;
 
     default:
       if (seenTape)
       {
           Serial.println("Keep doing last");
-          robot->stop();
+          // robot->stop();
       }
       else
       {
