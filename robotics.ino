@@ -4,17 +4,22 @@
 //#define LED_ROBOT
 #define SODAR_ROBOT
 
+#if defined(LED_ROBOT)
 #include "led_array.h"
 #include "led_robot.h"
+#endif
+#if defined(SODAR_ROBOT)
 #include "sodar.h"
 #include "sodar_robot.h"
+#endif
 
 Motor *a;
 Motor *b;
 Robot *robot;
 #if defined(LED_ROBOT)
 LedArray *ledArray;
-#elif defined(SODAR_ROBOT)
+#endif
+#if defined(SODAR_ROBOT)
 Sodar *sodarFront;
 Sodar *sodarSide;
 #endif
@@ -31,7 +36,8 @@ void setup(void)
     ledArray = new LedArray(A2);
     delay(1000);
     ledArray->init();
-#elif defined(SODAR_ROBOT)
+#endif
+#if defined(SODAR_ROBOT)
     sodarFront = new Sodar(50, 51);
     sodarSide = new Sodar(52, 53);
     sodarFront->init();
