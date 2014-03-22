@@ -1,104 +1,50 @@
 #include "motor.h"
 #include "robot.h"
+
+//#define LED_ROBOT
+#define SODAR_ROBOT
+
 #include "led_array.h"
+#include "led_robot.h"
+#include "sodar.h"
+#include "sodar_robot.h"
 
 Motor *a;
 Motor *b;
 Robot *robot;
+#if defined(LED_ROBOT)
 LedArray *ledArray;
-bool seenTape;
+#elif defined(SODAR_ROBOT)
+Sodar *sodarFront;
+Sodar *sodarSide;
+#endif
 
 void setup(void)
 {
-  Serial.begin(9600);
+    Serial.begin(9600);
   
-  a = new Motor(12, 3, 9, A0);
-  b = new Motor(13, 11, 8, A1);
+    a = new Motor(12, 3, 9, A0);
+    b = new Motor(13, 11, 8, A1);
   
-  robot = new Robot(a, b);
-  
-  ledArray = new LedArray(A2);
-  delay(1000);
-  ledArray->init();
-
-  seenTape = false;
+    robot = new Robot(a, b);
+#if defined(LED_ROBOT)
+    ledArray = new LedArray(A2);
+    delay(1000);
+    ledArray->init();
+#elif defined(SODAR_ROBOT)
+    sodarFront = new Sodar(50, 51);
+    sodarSide = new Sodar(52, 53);
+    sodarFront->init();
+    sodarSide->init();
+#endif
 }
 
 void loop(void)
 {
-  switch(ledArray->isTape())
-  {
-    case B10000:
-    case B11000:
-    case B10100:
-    case B11100:
-    case B10010:
-    case B11010:
-    case B10110:
-    case B11110:
-      Serial.println("Turning left");
-      robot->turn_left();
-      seenTape = true;
-      
-      // if far left LED is tripped, turn left until it un-trips
-      while (ledArray->isTape() > 16) {
-        robot->turn_left();
-      }
-    break;
-
-    case B01000:
-    case B01100:
-      Serial.println("Turn left");
-      robot->turn_left();
-      seenTape = true;
-    break;
-    
-    case B00100:
-    case B01010:
-    case B01110:
-    case B11111:
-      Serial.println("Forward");
-      robot->forward();
-      seenTape = true;
-    break;
-
-    case B00010:
-    case B00110:
-      Serial.println("Turn right");
-      robot->turn_right();
-      seenTape = true;
-    break;
-    
-    case B00001:
-    case B00011:
-    case B00101:
-    case B00111:
-    case B01001:
-    case B01011:
-    case B01101:
-    case B01111:
-      Serial.println("Turning right");
-      robot->turn_right();
-      seenTape = true;
-                  
-      // if far right LED is tripped, turn right until it un-trips
-      while (ledArray->isTape() % 2) {
-        robot->turn_right();
-      }
-    break;
-
-    default:
-      if (seenTape)
-      {
-          Serial.println("Keep doing last");
-          // robot->stop();
-      }
-      else
-      {
-          Serial.println("Go");
-          robot->forward();
-      }
-    break;
-  }
-  delay(50);
+#if defined(LED_ROBOT)
+    LedRobotLoop(robot, ledArray);
+#elif defined(SODAR_ROBOT)
+    SodarRobotLoop(robot, sodarFront, sodarSide);
+#endif
+    delay(50);
 }
