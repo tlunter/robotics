@@ -25,11 +25,11 @@ void Robot::stop() {
 
 void Robot::turn_left() {
     this->a->drive(FAST_SPEED);
-    this->b->drive(0);
+    this->b->drive(-50);
 }
 
 void Robot::turn_right() {
-    this->a->drive(0);
+    this->a->drive(45);
     this->b->drive(FAST_SPEED);
 }
 
