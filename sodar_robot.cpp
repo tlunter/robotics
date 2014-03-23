@@ -8,8 +8,8 @@
 
 void SodarRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
 {
-	unsigned long frontDistance;
-	unsigned long sideDistance;
+	double frontDistance;
+	double sideDistance;
 
 	frontDistance = sodarFront->distance();
 	sideDistance  = sodarSide->distance();
