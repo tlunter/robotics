@@ -6,10 +6,11 @@
 
 void SodarRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
 {
+	Serial.println("");
     Serial.print("Front: ");
     Serial.print(sodarFront->distance());
-    Serial.println(" cm");
-    Serial.print("Side: ");
+    Serial.print(" cm");
+    Serial.print("      Side: ");
     Serial.print(sodarSide->distance());
-    Serial.println(" cm");
+    Serial.print(" cm");
 }
