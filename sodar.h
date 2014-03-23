@@ -8,8 +8,8 @@ class Sodar {
         unsigned long duration;
         Sodar(int, int);
         void init();
-        unsigned long distance();
-        unsigned long microsecondsToCentimeters(unsigned long);
+        double distance();
+        double microsecondsToCentimeters(unsigned long);
 
 };
 
