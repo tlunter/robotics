@@ -59,7 +59,7 @@ void SodarRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
     // Make sure the front sonar is not triggering
     if (frontDistance < 12)
     {
-        robot->turn_left();
+        robot->hard_left();
         return;
     }
 
@@ -78,7 +78,7 @@ void SodarRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
 
     if (sideDistance > 10)
     {
-        robot->turn_right();
+        robot->slight_right(45);
         return;
     }
 

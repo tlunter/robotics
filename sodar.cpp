@@ -2,7 +2,7 @@
 #include "sodar.h"
 
 Sodar::Sodar(int triggerPin, int echoPin) :
-	triggerPin(triggerPin), echoPin(echoPin), duration(0) {}
+    triggerPin(triggerPin), echoPin(echoPin), duration(0) {}
 
 void Sodar::init() {
     pinMode(triggerPin, OUTPUT);
