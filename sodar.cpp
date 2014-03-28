@@ -2,14 +2,14 @@
 #include "sodar.h"
 
 Sodar::Sodar(int triggerPin, int echoPin) :
-	triggerPin(triggerPin), echoPin(echoPin), duration(0) {}
+    triggerPin(triggerPin), echoPin(echoPin), duration(0) {}
 
 void Sodar::init() {
     pinMode(triggerPin, OUTPUT);
     pinMode(echoPin, INPUT);
 }
 
-unsigned long Sodar::distance()
+double Sodar::distance()
 {
     digitalWrite(triggerPin, LOW);
     delayMicroseconds(2);
@@ -28,7 +28,7 @@ unsigned long Sodar::distance()
 // 0.0029 * 10^6 = ms/m = 2941.176
 // 2941.176 / 100 = ms/cm = 29.41
 // Divide by two for distance out
-unsigned long Sodar::microsecondsToCentimeters(unsigned long microseconds)
+double Sodar::microsecondsToCentimeters(unsigned long microseconds)
 {
     return microseconds / 29.41 / 2;
 }

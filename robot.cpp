@@ -23,6 +23,16 @@ void Robot::stop() {
     this->b->drive(0);
 }
 
+void Robot::hard_left() {
+    this->a->drive(FAST_SPEED);
+    this->b->drive(-50);
+}
+
+void Robot::hard_right() {
+    this->a->drive(-50);
+    this->b->drive(FAST_SPEED);
+}
+
 void Robot::turn_left() {
     this->a->drive(FAST_SPEED);
     this->b->drive(0);
@@ -40,5 +50,15 @@ void Robot::slight_left() {
 
 void Robot::slight_right() {
     this->a->drive(LOW_SPEED);
+    this->b->drive(FAST_SPEED);
+}
+
+void Robot::slight_left(int pwm) {
+    this->a->drive(FAST_SPEED);
+    this->b->drive(pwm);
+}
+
+void Robot::slight_right(int pwm) {
+    this->a->drive(pwm);
     this->b->drive(FAST_SPEED);
 }
