@@ -2,8 +2,8 @@
 #include "robot.h"
 
 //#define LINE_FOLLOWER
-#define WALL_FOLLOWER
-//#define ROBOT_FOLLOWER
+//#define WALL_FOLLOWER
+#define ROBOT_FOLLOWER
 
 #if defined(LINE_FOLLOWER)
 #include "led_array.h"
