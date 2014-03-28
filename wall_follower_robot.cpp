@@ -2,12 +2,12 @@
 #include "motor.h"
 #include "robot.h"
 #include "sodar.h"
-#include "sodar_robot.h"
+#include "wall_follower_robot.h"
 
 #define SODAR_DEBUG 1
 #define HISTORY_SIZE 10
 
-void SodarRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
+void WallFollowerRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
 {
     static double *history = new double[HISTORY_SIZE]();
     static unsigned int historyIndex = 0;

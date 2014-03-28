@@ -2,9 +2,9 @@
 #include "motor.h"
 #include "robot.h"
 #include "led_array.h"
-#include "led_robot.h"
+#include "line_follower_robot.h"
 
-void LedRobotLoop(Robot *robot, LedArray *ledArray)
+void LineFollowerRobotLoop(Robot *robot, LedArray *ledArray)
 {
     static bool seenTape = false;
     switch(ledArray->isTape())

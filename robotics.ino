@@ -1,27 +1,37 @@
 #include "motor.h"
 #include "robot.h"
 
-//#define LED_ROBOT
-#define SODAR_ROBOT
+//#define LINE_FOLLOWER
+#define WALL_FOLLOWER
+//#define ROBOT_FOLLOWER
 
-#if defined(LED_ROBOT)
+#if defined(LINE_FOLLOWER)
 #include "led_array.h"
-#include "led_robot.h"
+#include "line_follower_robot.h"
 #endif
-#if defined(SODAR_ROBOT)
+
+#if defined(WALL_FOLLOWER) || defined(ROBOT_FOLLOWER)
 #include "sodar.h"
-#include "sodar_robot.h"
+#endif
+
+#if defined(WALL_FOLLOWER)
+#include "wall_follower_robot.h"
+#endif
+
+#if defined(ROBOT_FOLLOWER)
+#include "robot_follower_robot.h"
 #endif
 
 Motor *a;
 Motor *b;
 Robot *robot;
-#if defined(LED_ROBOT)
+#if defined(LINE_FOLLOWER)
 LedArray *ledArray;
 #endif
-#if defined(SODAR_ROBOT)
-Sodar *sodarFront;
-Sodar *sodarSide;
+
+#if defined(WALL_FOLLOWER) || defined(ROBOT_FOLLOWER)
+Sodar *sodarOne;
+Sodar *sodarTwo;
 #endif
 
 void setup(void)
@@ -32,25 +42,27 @@ void setup(void)
     b = new Motor(13, 11, 8, A1);
   
     robot = new Robot(a, b);
-#if defined(LED_ROBOT)
+#if defined(LINE_FOLLOWER)
     ledArray = new LedArray(A2);
     delay(1000);
     ledArray->init();
 #endif
-#if defined(SODAR_ROBOT)
-    sodarFront = new Sodar(50, 51);
-    sodarSide = new Sodar(52, 53);
-    sodarFront->init();
-    sodarSide->init();
+#if defined(WALL_FOLLOWER) || defined(ROBOT_FOLLOWER)
+    sodarOne = new Sodar(50, 51);
+    sodarTwo = new Sodar(52, 53);
+    sodarOne->init();
+    sodarTwo->init();
 #endif
 }
 
 void loop(void)
 {
-#if defined(LED_ROBOT)
-    LedRobotLoop(robot, ledArray);
-#elif defined(SODAR_ROBOT)
-    SodarRobotLoop(robot, sodarFront, sodarSide);
+#if defined(LINE_FOLLOWER)
+    LineFollowerRobotLoop(robot, ledArray);
+#elif defined(WALL_FOLLOWER)
+    WallFollowerRobotLoop(robot, sodarOne, sodarTwo);
+#elif defined(ROBOT_FOLLOWER)
+    RobotFollowerRobotLoop(robot, sodarOne, sodarTwo);
 #endif
     delay(50);
 }
