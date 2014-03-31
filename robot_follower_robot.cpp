@@ -4,6 +4,12 @@
 #include "sodar.h"
 #include "robot_follower_robot.h"
 
+#define DEBUG
+#define MIN_DISTANCE 10
+#define MAX_DISTANCE 20
+#define MAX_THRESHOLD 40
+#define THRESHOLD 2
+
 void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarRight)
 {
     double leftDistance;
@@ -11,8 +17,65 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarRight)
     leftDistance = sodarLeft->distance();
     rightDistance  = sodarRight->distance();
 
+#if defined(DEBUG)
     Serial.print("Left: ");
     Serial.print(leftDistance);
     Serial.print("\tRight: ");
     Serial.println(rightDistance);
+#endif
+    if (leftDistance < MIN_DISTANCE || rightDistance < MIN_DISTANCE)
+    {
+        if (abs(leftDistance - rightDistance) < THRESHOLD)
+        {
+            Serial.println("Back");
+            robot->backward();
+        }
+        else if ((leftDistance - rightDistance) > THRESHOLD)
+        {
+            Serial.println("Right + Back");
+            robot->backward_slight_left();
+        }
+        else if ((rightDistance - leftDistance) > THRESHOLD)
+        {
+            Serial.println("Left + Back");
+            robot->backward_slight_right();
+        }
+    }
+    else if ((leftDistance > MAX_DISTANCE && leftDistance < MAX_THRESHOLD) || (rightDistance > MAX_DISTANCE && rightDistance < MAX_THRESHOLD))
+    {
+        if (abs(leftDistance - rightDistance) < THRESHOLD)
+        {
+            Serial.println("Forward");
+            robot->forward();
+        }
+        else if ((leftDistance - rightDistance) > THRESHOLD)
+        {
+            Serial.println("Right + Forward");
+            robot->slight_right();
+        }
+        else if ((rightDistance - leftDistance) > THRESHOLD)
+        {
+            Serial.println("Left + Forward");
+            robot->slight_left();
+        }
+    }
+    else if ((leftDistance > MIN_DISTANCE && leftDistance < MAX_DISTANCE) ||
+            (rightDistance > MIN_DISTANCE && rightDistance < MAX_DISTANCE))
+    {
+        if (abs(leftDistance - rightDistance) < THRESHOLD)
+        {
+            Serial.println("Stop");
+            robot->stop();
+        }
+        else if ((leftDistance - rightDistance) > THRESHOLD)
+        {
+            Serial.println("Right");
+            robot->turn_right();
+        }
+        else if ((rightDistance - leftDistance) > THRESHOLD)
+        {
+            Serial.println("Left");
+            robot->turn_left();
+        }
+    }
 }
