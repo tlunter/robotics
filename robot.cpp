@@ -5,60 +5,84 @@
 #define LOW_SPEED 90
 
 Robot::Robot(Motor *motor_a, Motor *motor_b) : 
-    a(motor_a), b(motor_b) {
+    a(motor_a), b(motor_b)
+{
 }
 
-void Robot::forward() {
+void Robot::forward()
+{
     this->a->drive(FAST_SPEED);
     this->b->drive(FAST_SPEED);
 }
 
-void Robot::backward() {
+void Robot::backward()
+{
     this->a->drive(-FAST_SPEED);
     this->b->drive(-FAST_SPEED);
 }
 
-void Robot::stop() {
+void Robot::stop()
+{
     this->a->drive(0);
     this->b->drive(0);
 }
 
-void Robot::hard_left() {
+void Robot::hard_left()
+{
     this->a->drive(FAST_SPEED);
     this->b->drive(-50);
 }
 
-void Robot::hard_right() {
+void Robot::hard_right()
+{
     this->a->drive(-50);
     this->b->drive(FAST_SPEED);
 }
 
-void Robot::turn_left() {
+void Robot::turn_left()
+{
     this->a->drive(FAST_SPEED);
     this->b->drive(0);
 }
 
-void Robot::turn_right() {
+void Robot::turn_right()
+{
     this->a->drive(0);
     this->b->drive(FAST_SPEED);
 }
 
-void Robot::slight_left() {
+void Robot::slight_left()
+{
     this->a->drive(FAST_SPEED);
     this->b->drive(LOW_SPEED);
 }
 
-void Robot::slight_right() {
+void Robot::slight_right()
+{
     this->a->drive(LOW_SPEED);
     this->b->drive(FAST_SPEED);
 }
 
-void Robot::slight_left(int pwm) {
+void Robot::backward_slight_left()
+{
+    this->a->drive(-FAST_SPEED);
+    this->b->drive(-LOW_SPEED);
+}
+
+void Robot::backward_slight_right()
+{
+    this->a->drive(-LOW_SPEED);
+    this->b->drive(-FAST_SPEED);
+}
+
+void Robot::left(int pwm)
+{
     this->a->drive(FAST_SPEED);
     this->b->drive(pwm);
 }
 
-void Robot::slight_right(int pwm) {
+void Robot::right(int pwm)
+{
     this->a->drive(pwm);
     this->b->drive(FAST_SPEED);
 }

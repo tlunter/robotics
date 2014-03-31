@@ -78,7 +78,7 @@ void WallFollowerRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
 
     if (sideDistance > 10)
     {
-        robot->slight_right(45);
+        robot->right(45);
         return;
     }
 

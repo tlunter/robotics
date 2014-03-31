@@ -14,8 +14,10 @@ class Robot {
         void turn_right();
         void slight_left();
         void slight_right();
-        void slight_left(int);
-        void slight_right(int);
+        void backward_slight_left();
+        void backward_slight_right();
+        void left(int);
+        void right(int);
 };
 
 #endif
