@@ -29,11 +29,11 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarRight, S
 #endif
     if (centerDistance < MIN_DISTANCE) {
         //Robot is close to the left
-        if (leftDistance < rightDistance && (rightDistance - center) > THRESHOLD) {
+        if (leftDistance < rightDistance && leftDistance < centerDistance) { 
             Serial.println("Left and Back");
             robot->backward_slight_right();
         }
-        else if (leftDistance > rightDistance && (leftDistance - center) > THRESHOLD) {
+        else if (rightDistance < leftDistance && rightDistance < centerDistance) {
             Serial.println("Right and Back");
             robot->backward_slight_left();
         } else {
@@ -44,11 +44,11 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarRight, S
     }
     else if (centerDistance > MAX_DISTANCE) {
         //Robot is far and left
-        if (leftDistance < rightDistance && (rightDistance - center) > THRESHOLD) {
+        if (leftDistance < rightDistance && leftDistance < centerDistance) { 
             Serial.println("Left and Forward");
             robot->forward_slight_left();
         }
-        else if (leftDistance > rightDistance && (leftDistance - center) > THRESHOLD) {
+        else if (rightDistance < leftDistance && rightDistance < centerDistance) {
             Serial.println("Right and Forward");
             robot->forward_slight_right();
         } else {
