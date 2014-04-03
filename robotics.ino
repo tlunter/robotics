@@ -32,7 +32,7 @@ LedArray *ledArray;
 #if defined(WALL_FOLLOWER) || defined(ROBOT_FOLLOWER)
 Sodar *sodarOne;
 Sodar *sodarTwo;
-Sodar *sodarThree
+Sodar *sodarThree;
 #endif
 
 void setup(void)
@@ -51,7 +51,7 @@ void setup(void)
 #if defined(WALL_FOLLOWER) || defined(ROBOT_FOLLOWER)
     sodarOne = new Sodar(48, 49);
     sodarTwo = new Sodar(50, 51);
-    sodarThree= new Sodar(52, 53);
+    sodarThree = new Sodar(52, 53);
     sodarOne->init();
     sodarTwo->init();
     sodarThree->init();

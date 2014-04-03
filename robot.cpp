@@ -30,12 +30,12 @@ void Robot::stop()
 void Robot::hard_left()
 {
     this->a->drive(FAST_SPEED);
-    this->b->drive(-50);
+    this->b->drive(-80);
 }
 
 void Robot::hard_right()
 {
-    this->a->drive(-50);
+    this->a->drive(-80);
     this->b->drive(FAST_SPEED);
 }
 
