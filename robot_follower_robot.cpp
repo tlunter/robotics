@@ -8,14 +8,18 @@
 #define MIN_DISTANCE 10
 #define MAX_DISTANCE 20
 #define MAX_THRESHOLD 40
-#define THRESHOLD 2
+#define THRESHOLD 1
 
-void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarRight)
-{
+void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarRight, Sodar *sodarCenter)
+{   double centerDistance;
     double leftDistance;
     double rightDistance;
+    delay(10);
     leftDistance = sodarLeft->distance();
+    delay(10);
     rightDistance  = sodarRight->distance();
+    delay(10);
+    centerDistance = sodarCenter->distance();
 
 #if defined(DEBUG)
     Serial.print("Left: ");
@@ -23,68 +27,42 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarRight)
     Serial.print("\tRight: ");
     Serial.println(rightDistance);
 #endif
-    if (leftDistance < MIN_DISTANCE || rightDistance < MIN_DISTANCE)
-    {
-        if (abs(leftDistance - rightDistance) < THRESHOLD)
-        {
-            // Enemy robot is too close
-            Serial.println("Back");
-            robot->backward();
-        }
-        else if ((leftDistance - rightDistance) > THRESHOLD)
-        {
-            // Enemy robot is too close and to the right
-            Serial.println("Right + Back");
-            robot->backward_slight_left();
-        }
-        else if ((rightDistance - leftDistance) > THRESHOLD)
-        {
-            // Enemy robot is too close and to the left
-            Serial.println("Left + Back");
+    if (centerDistance < MIN_DISTANCE) {
+        //Robot is close to the left
+        if (leftDistance < rightDistance && (rightDistance - center) > THRESHOLD) {
+            Serial.println("Left and Back");
             robot->backward_slight_right();
         }
+        else if (leftDistance > rightDistance && (leftDistance - center) > THRESHOLD) {
+            Serial.println("Right and Back");
+            robot->backward_slight_left();
+        } else {
+            Serial.println("Back");
+            robot->backward();
+
+        }
     }
-    else if ((leftDistance > MAX_DISTANCE && leftDistance < MAX_THRESHOLD) || (rightDistance > MAX_DISTANCE && rightDistance < MAX_THRESHOLD))
-    {
-        if (abs(leftDistance - rightDistance) < THRESHOLD)
-        {
-            // Enemy robot is going out of range
+    else if (centerDistance > MAX_DISTANCE) {
+        //Robot is far and left
+        if (leftDistance < rightDistance && (rightDistance - center) > THRESHOLD) {
+            Serial.println("Left and Forward");
+            robot->forward_slight_left();
+        }
+        else if (leftDistance > rightDistance && (leftDistance - center) > THRESHOLD) {
+            Serial.println("Right and Forward");
+            robot->forward_slight_right();
+        } else {
             Serial.println("Forward");
             robot->forward();
+
         }
-        else if ((leftDistance - rightDistance) > THRESHOLD)
-        {
-            // Enemy robot is going out of range to the right
-            Serial.println("Right + Forward");
-            robot->slight_right();
-        }
-        else if ((rightDistance - leftDistance) > THRESHOLD)
-        {
-            // Enemy robot is going out of range to the left
-            Serial.println("Left + Forward");
-            robot->slight_left();
-        }
+    } else {
+       if (leftDistance < MAX_DISTANCE) {
+           robot->hard_left();
+       }
+       else if (rightDistance < MAX_DISTANCE) {
+           robot->hard_right();
+       } else {
+           robot->stop();
+       }
     }
-    else if ((leftDistance > MIN_DISTANCE && leftDistance < MAX_DISTANCE) ||
-            (rightDistance > MIN_DISTANCE && rightDistance < MAX_DISTANCE))
-    {
-        if (abs(leftDistance - rightDistance) < THRESHOLD)
-        {
-            // Enemy robot is right where we want him
-            Serial.println("Stop");
-            robot->stop();
-        }
-        else if ((leftDistance - rightDistance) > THRESHOLD)
-        {
-            // Enemy robot is in range but off to the right
-            Serial.println("Right");
-            robot->turn_right();
-        }
-        else if ((rightDistance - leftDistance) > THRESHOLD)
-        {
-            // Enemy robot is in range but off to the left
-            Serial.println("Left");
-            robot->turn_left();
-        }
-    }
-}

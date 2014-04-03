@@ -32,6 +32,7 @@ LedArray *ledArray;
 #if defined(WALL_FOLLOWER) || defined(ROBOT_FOLLOWER)
 Sodar *sodarOne;
 Sodar *sodarTwo;
+Sodar *sodarThree
 #endif
 
 void setup(void)
@@ -48,10 +49,12 @@ void setup(void)
     ledArray->init();
 #endif
 #if defined(WALL_FOLLOWER) || defined(ROBOT_FOLLOWER)
-    sodarOne = new Sodar(50, 51);
-    sodarTwo = new Sodar(52, 53);
+    sodarOne = new Sodar(48, 49);
+    sodarTwo = new Sodar(50, 51);
+    sodarThree= new Sodar(52, 53);
     sodarOne->init();
     sodarTwo->init();
+    sodarThree->init();
 #endif
 }
 
@@ -60,9 +63,9 @@ void loop(void)
 #if defined(LINE_FOLLOWER)
     LineFollowerRobotLoop(robot, ledArray);
 #elif defined(WALL_FOLLOWER)
-    WallFollowerRobotLoop(robot, sodarOne, sodarTwo);
+    WallFollowerRobotLoop(robot, sodarOne, sodarTwo, sodarThree);
 #elif defined(ROBOT_FOLLOWER)
-    RobotFollowerRobotLoop(robot, sodarOne, sodarTwo);
+    RobotFollowerRobotLoop(robot, sodarOne, sodarTwo, sodarThree);
 #endif
     delay(50);
 }
