@@ -7,15 +7,16 @@
 #define DEBUG
 #define MIN_DISTANCE 10
 #define MAX_DISTANCE 20
-#define MAX_THRESHOLD 40
-#define THRESHOLD 2
-#define SIDE_THRESHOLD 3.5
+#define MAX_THRESHOLD 60
+#define SIDE_THRESHOLD 4
 
 double centerDistance;
 double leftDistance;
 double rightDistance;
+robot_direction_t lineDirection;
+robot_turn_t turnDirection;
 
-void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarRight, Sodar *sodarCenter)
+void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, Sodar *sodarRight)
 {
     leftDistance = sodarLeft->distance();
     delay(10);
@@ -33,55 +34,44 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarRight, S
 #endif
     if (centerDistance < MIN_DISTANCE)
     {
-        //Robot is close to the left
-        if ((abs(centerDistance - leftDistance) < SIDE_THRESHOLD || leftDistance > MAX_THRESHOLD) && (abs(centerDistance - rightDistance) < SIDE_THRESHOLD || rightDistance > MAX_THRESHOLD))
-        {
-            Serial.println("Back");
-            robot->backward();
-        }
-        else if (leftDistance < rightDistance)
-        { 
-            Serial.println("Left and Back");
-            robot->backward_slight_right();
-        }
-        else if (rightDistance < leftDistance)
-        {
-            Serial.println("Right and Back");
-            robot->backward_slight_left();
-        }
+        Serial.print("Backward\t");
+        lineDirection = ROBOT_DIR_BACKWARD;
     }
-    else if (centerDistance > MAX_DISTANCE && centerDistance < MAX_THRESHOLD)
+    else if (centerDistance < MAX_THRESHOLD && centerDistance > MAX_DISTANCE)
     {
-        if ((abs(centerDistance - leftDistance) < SIDE_THRESHOLD || leftDistance > MAX_THRESHOLD) && (abs(centerDistance - rightDistance) < SIDE_THRESHOLD || rightDistance > MAX_THRESHOLD))
-        {
-            Serial.println("Forward");
-            robot->forward();
-        }
-        //Robot is far and left
-        else if (leftDistance < rightDistance)
-        {
-            Serial.println("Left and Forward");
-            robot->slight_left();
-        }
-        else if (rightDistance < leftDistance)
-        {
-            Serial.println("Right and Forward");
-            robot->slight_right();
-        }
+        Serial.print("Forward\t");
+        lineDirection = ROBOT_DIR_FORWARD;
     }
     else
     {
-       if (leftDistance < MAX_DISTANCE)
-       {
-           robot->hard_left();
-       }
-       else if (rightDistance < MAX_DISTANCE)
-       {
-           robot->hard_right();
-       }
-       else
-       {
-           robot->stop();
-       }
+        Serial.print("Stop\t");
+        lineDirection = ROBOT_DIR_STOP;
+    }
+
+    if (centerDistance - leftDistance > SIDE_THRESHOLD && leftDistance < MAX_THRESHOLD)
+    {
+        Serial.print("Left\t");
+        turnDirection = ROBOT_TURN_LEFT;
+    }
+    else if (centerDistance - rightDistance > SIDE_THRESHOLD && rightDistance < MAX_THRESHOLD)
+    {
+        Serial.print("Right\t");
+        turnDirection = ROBOT_TURN_RIGHT;
+    }
+    else
+    {
+        Serial.print("Center\t");
+        turnDirection = ROBOT_STRAIGHT;
+    }
+    Serial.println();
+
+    if (lineDirection == ROBOT_DIR_FORWARD)
+    {
+    }
+    else if (lineDirection == ROBOT_DIR_BACKWARD)
+    {
+    }
+    else if (lineDirection == ROBOT_DIR_STOP)
+    {
     }
 }
