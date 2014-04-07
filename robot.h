@@ -5,19 +5,21 @@ class Robot {
     public:
         Robot(Motor*, Motor*);
         Motor *a, *b;
-        void forward();
-        void backward();
-        void stop();
-        void hard_left();
-        void hard_right();
-        void turn_left();
-        void turn_right();
-        void slight_left();
-        void slight_right();
-        void backward_slight_left();
-        void backward_slight_right();
-        void left(int);
-        void right(int);
+        int* forward();
+        int* backward();
+        int* stop();
+        int* hard_left();
+        int* hard_right();
+        int* turn_left();
+        int* turn_right();
+        int* slight_left();
+        int* slight_right();
+        int* backward_slight_left();
+        int* backward_slight_right();
+        int* left(int);
+        int* right(int);
+    private:
+        void drive(int*);
 };
 
 #endif

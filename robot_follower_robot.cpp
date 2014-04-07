@@ -19,6 +19,7 @@ double centerDistance;
 double leftDistance;
 double rightDistance;
 int historyIndex = 0;
+int *robotSpeed;
 enemy_robot_distance_t enemyDistance[ENEMY_HISTORY] = {ROBOT_DIR_OPTIMAL};
 enemy_robot_angle_t enemyAngle[ENEMY_HISTORY] = {ROBOT_CENTER};
 enemy_robot_distance_t currentDistance;
@@ -146,69 +147,84 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, 
         {
             if (newAngle == ROBOT_LEFT)
             {
-                robot->turn_left();
+                robotSpeed = robot->turn_left();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_LEFT_CENTER)
             {
-                robot->slight_left();
+                robotSpeed = robot->slight_left();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_CENTER)
             {
-                robot->forward();
+                robotSpeed = robot->forward();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_RIGHT_CENTER)
             {
-                robot->slight_right();
+                robotSpeed = robot->slight_right();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_RIGHT)
             {
-                robot->turn_right();
+                robotSpeed = robot->turn_right();
+                free(robotSpeed);
             }
         }
         else if (newDistance == ROBOT_DIR_OPTIMAL)
         {
             if (newAngle == ROBOT_LEFT)
             {
-                robot->hard_left();
+                robotSpeed = robot->hard_left();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_LEFT_CENTER)
             {
-                robot->hard_left();
+                robotSpeed = robot->hard_left();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_CENTER)
             {
-                robot->stop();
+                robotSpeed = robot->stop();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_RIGHT_CENTER)
             {
-                robot->hard_right();
+                robotSpeed = robot->hard_right();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_RIGHT)
             {
-                robot->hard_right();
+                robotSpeed = robot->hard_right();
+                free(robotSpeed);
             }
         }
         else if (newDistance == ROBOT_DIR_CLOSE)
         {
             if (newAngle == ROBOT_LEFT)
             {
-                robot->backward_slight_right();
+                robotSpeed = robot->backward_slight_right();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_LEFT_CENTER)
             {
-                robot->backward_slight_right();
+                robotSpeed = robot->backward_slight_right();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_CENTER)
             {
-                robot->backward();
+                robotSpeed = robot->backward();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_RIGHT_CENTER)
             {
-                robot->backward_slight_left();
+                robotSpeed = robot->backward_slight_left();
+                free(robotSpeed);
             }
             else if (newAngle == ROBOT_RIGHT)
             {
-                robot->backward_slight_left();
+                robotSpeed = robot->backward_slight_left();
+                free(robotSpeed);
             }
         }
     }
