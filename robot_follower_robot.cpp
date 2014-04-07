@@ -136,11 +136,11 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, 
         if (abs(enemyAngle[i % ENEMY_HISTORY] - newAngle) < POSSIBLE_ANGLE_MOVEMENT &&
             abs(enemyDistance[i % ENEMY_HISTORY] - newDistance < POSSIBLE_DIR_MOVEMENT))
         {
-            count++;
+            seenCount++;
         }
     }
 
-    if (count >= NUM_CORRECT_TRACKING)
+    if (seenCount >= NUM_CORRECT_TRACKING)
     {
         if (newDistance == ROBOT_DIR_FAR)
         {
