@@ -18,6 +18,8 @@ class Robot {
         int* backward_slight_right();
         int* left(int);
         int* right(int);
+
+        void percentDrive(double);
     private:
         void drive(int*);
 };

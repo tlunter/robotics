@@ -142,3 +142,9 @@ void Robot::drive(int *speed)
     this->a->drive(speed[0]);
     this->b->drive(speed[1]);
 }
+
+void Robot::percentDrive(double percent)
+{
+    this->a->drive(FAST_SPEED * percent);
+    this->b->drive(FAST_SPEED * percent);
+}
