@@ -27,10 +27,6 @@ enemy_robot_angle_t currentAngle;
 
 void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, Sodar *sodarRight)
 {
-    robot->forward();
-    robot->turn_right();
-    return;
-
     // First, get left/right/center val. for now, center
     currentAngle = ROBOT_CENTER;
 
