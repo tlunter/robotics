@@ -20,6 +20,8 @@ class Robot {
         void right(int);
 
         void percentDrive(double);
+        void driveLeft();
+        void driveRight();
     private:
         void drive(int*);
 };
