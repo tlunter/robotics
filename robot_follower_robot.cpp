@@ -13,7 +13,6 @@
 
 double fbDistance;
 int historyIndex = 0;
-int *robotSpeed;
 enemy_robot_distance_t currentDistance;
 enemy_robot_angle_t currentAngle;
 

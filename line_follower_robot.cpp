@@ -4,8 +4,6 @@
 #include "led_array.h"
 #include "line_follower_robot.h"
 
-int *lineSpeed;
-
 void LineFollowerRobotLoop(Robot *robot, LedArray *ledArray)
 {
     static bool seenTape = false;
@@ -20,22 +18,19 @@ void LineFollowerRobotLoop(Robot *robot, LedArray *ledArray)
         case B10110:
         case B11110:
             Serial.println("Turning left");
-            lineSpeed = robot->turn_left();
-            free(lineSpeed);
+            robot->turn_left();
             seenTape = true;
 
             // if far left LED is tripped, turn left until it un-trips
             while (ledArray->isTape() > 16) {
-                lineSpeed = robot->turn_left();
-                free(lineSpeed);
+                robot->turn_left();
             }
         break;
 
         case B01000:
         case B01100:
             Serial.println("Turn left");
-            lineSpeed = robot->turn_left();
-            free(lineSpeed);
+            robot->turn_left();
             seenTape = true;
         break;
 
@@ -44,16 +39,14 @@ void LineFollowerRobotLoop(Robot *robot, LedArray *ledArray)
         case B01110:
         case B11111:
             Serial.println("Forward");
-            lineSpeed = robot->forward();
-            free(lineSpeed);
+            robot->forward();
             seenTape = true;
         break;
 
         case B00010:
         case B00110:
             Serial.println("Turn right");
-            lineSpeed = robot->turn_right();
-            free(lineSpeed);
+            robot->turn_right();
             seenTape = true;
         break;
 
@@ -66,28 +59,25 @@ void LineFollowerRobotLoop(Robot *robot, LedArray *ledArray)
         case B01101:
         case B01111:
             Serial.println("Turning right");
-            lineSpeed = robot->turn_right();
-            free(lineSpeed);
+            robot->turn_right();
             seenTape = true;
 
             // if far right LED is tripped, turn right until it un-trips
             while (ledArray->isTape() % 2) {
-                lineSpeed = robot->turn_right();
-                free(lineSpeed);
+                robot->turn_right();
             }
         break;
 
         default:
             if (seenTape)
             {
-                Serial.println("Keep doing last");
+                    Serial.println("Keep doing last");
                 // robot->stop();
             }
             else
             {
                 Serial.println("Go");
-                lineSpeed = robot->forward();
-                free(lineSpeed);
+                robot->forward();
             }
         break;
     }
