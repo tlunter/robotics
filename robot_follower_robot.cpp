@@ -13,27 +13,60 @@
 
 double fbDistance;
 int historyIndex = 0;
-enemy_robot_distance_t currentDistance;
 enemy_robot_angle_t currentAngle;
+
+enemy_robot_angle_t getCurrentAngle()
+{
+    enemy_robot_angle_t angle = ROBOT_ANGLE_NONE;
+    unsigned char data = 0x40;
+
+    while (Serial.available())
+    {
+        data = (unsigned char)Serial.read();
+    }
+
+    switch (data) {
+        case 0x40:
+            angle = ROBOT_ANGLE_NONE;
+            break;
+        case 0x41:
+            angle = ROBOT_ANGLE_LEFT;
+            break;
+        case 0x42:
+            angle = ROBOT_ANGLE_CENTER;
+            break;
+        case 0x43:
+            angle = ROBOT_ANGLE_RIGHT;
+            break;
+        default:
+            break;
+    }
+
+    return angle;
+}
 
 void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, Sodar *sodarRight)
 {
     // First, get left/right/center val. for now, center
-    currentAngle = ROBOT_ANGLE_CENTER;
+    currentAngle = getCurrentAngle();
 
     switch (currentAngle)
     {
         case ROBOT_ANGLE_LEFT:
-        fbDistance = sodarLeft->distance();
-        break;
+            fbDistance = sodarLeft->distance();
+            break;
 
         case ROBOT_ANGLE_CENTER:
-        fbDistance = sodarCenter->distance();
-        break;
+            fbDistance = sodarCenter->distance();
+            break;
 
         case ROBOT_ANGLE_RIGHT:
-        fbDistance = sodarRight->distance();
-        break;
+            fbDistance = sodarRight->distance();
+            break;
+
+        default:
+            fbDistance = OPTIMAL_DISTANCE;
+            break;
     }
 
 #if defined(DEBUG)
@@ -46,18 +79,15 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, 
     if (fbDistance < MIN_DISTANCE)
     {
         Serial.print("Too close\t");
-        currentDistance = ROBOT_DIR_CLOSE;
     }
     else if (fbDistance < MAX_THRESHOLD && fbDistance > MAX_DISTANCE)
     {
         Serial.print("Too far\t");
-        currentDistance = ROBOT_DIR_FAR;
     }
     else
     {
         // even if its past our MAX_THRESHOLD, we report its 'just right' so it stays put while it turns to find it
         Serial.print("Just right\t");
-        currentDistance = ROBOT_DIR_OPTIMAL;
     }
 
     if (fbDistance < MAX_THRESHOLD)
@@ -75,7 +105,19 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, 
         percentDistance = (fbDistance - (float)OPTIMAL_DISTANCE) / ((float)RANGE_DISTANCE / 2.0);
         Serial.print("\tPD: ");
         Serial.print(percentDistance);
-        robot->percentDrive(percentDistance);
+
+        if (currentAngle == ROBOT_ANGLE_LEFT)
+        {
+            robot->driveLeft();
+        }
+        else if (currentAngle == ROBOT_ANGLE_CENTER)
+        {
+            robot->percentDrive(percentDistance);
+        }
+        else if (currentAngle == ROBOT_ANGLE_RIGHT)
+        {
+            robot->driveRight();
+        }
     }
 
     Serial.println();
