@@ -10,37 +10,29 @@
 #define OPTIMAL_DISTANCE ((MAX_DISTANCE + MIN_DISTANCE) / 2)
 #define RANGE_DISTANCE (MAX_DISTANCE - MIN_DISTANCE)
 #define MAX_THRESHOLD 60
-#define SIDE_THRESHOLD 4
 
-#define ENEMY_HISTORY 40
-#define POSSIBLE_DIR_MOVEMENT 2
-#define POSSIBLE_ANGLE_MOVEMENT 3
-#define NUM_CORRECT_TRACKING 2
-
-double fbDistance; // forward-back distance
+double fbDistance;
 int historyIndex = 0;
 int *robotSpeed;
-enemy_robot_distance_t enemyDistance[ENEMY_HISTORY] = {ROBOT_DIR_OPTIMAL};
-// enemy_robot_angle_t enemyAngle[ENEMY_HISTORY] = {ROBOT_CENTER};
 enemy_robot_distance_t currentDistance;
 enemy_robot_angle_t currentAngle;
 
 void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, Sodar *sodarRight)
 {
     // First, get left/right/center val. for now, center
-    currentAngle = ROBOT_CENTER;
+    currentAngle = ROBOT_ANGLE_CENTER;
 
     switch (currentAngle)
     {
-        case ROBOT_LEFT:
+        case ROBOT_ANGLE_LEFT:
         fbDistance = sodarLeft->distance();
         break;
 
-        case ROBOT_CENTER:
+        case ROBOT_ANGLE_CENTER:
         fbDistance = sodarCenter->distance();
         break;
 
-        case ROBOT_RIGHT:
+        case ROBOT_ANGLE_RIGHT:
         fbDistance = sodarRight->distance();
         break;
     }
@@ -69,42 +61,6 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, 
         currentDistance = ROBOT_DIR_OPTIMAL;
     }
 
-
-    int previousHistory = (historyIndex - 1) % ENEMY_HISTORY;
-    enemy_robot_distance_t previousDistance = enemyDistance[previousHistory];
-    // enemy_robot_angle_t previousAngle = enemyAngle[previousHistory];
-
-    enemy_robot_distance_t newDistance = ROBOT_DIR_NONE;
-
-    if (abs(previousDistance - currentDistance) < 2)
-    {
-        // Serial.print("Catching up/Running away\t");
-        enemyDistance[historyIndex] = currentDistance;
-        newDistance = enemyDistance[historyIndex];
-    }
-    else
-    {
-        // Keep repeating previous command
-        // Serial.print("Rapid speed change?\t");
-    }
-
-
-    switch(currentAngle)
-    {
-        case ROBOT_LEFT:
-        robotSpeed = robot->turn_left();
-        break;
-
-        case ROBOT_RIGHT:
-        robotSpeed = robot->turn_right();
-        break;
-
-        case ROBOT_CENTER:
-        
-        break;
-    }         
-    free(robotSpeed);
-    
     if (fbDistance < MAX_THRESHOLD)
     {
         if (fbDistance > MAX_DISTANCE)
