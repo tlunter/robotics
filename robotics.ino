@@ -69,9 +69,5 @@ void loop(void)
 #elif defined(ROBOT_FOLLOWER)
     RobotFollowerRobotLoop(robot, sodarOne, sodarTwo, sodarThree);
 #endif
-    Serial.flush();
-    delay(50);
-    digitalWrite(13, HIGH);
-    delay(10);
-    digitalWrite(13, LOW);
+    delay(35);
 }
