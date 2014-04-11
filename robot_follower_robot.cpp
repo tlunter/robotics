@@ -20,7 +20,7 @@ enemy_robot_angle_t getCurrentAngle()
     enemy_robot_angle_t angle = ROBOT_ANGLE_NONE;
     unsigned char data = 0x40;
 
-    while (Serial.available())
+    if (Serial.available())
     {
         data = (unsigned char)Serial.read();
     }
@@ -65,7 +65,7 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, 
             break;
 
         default:
-            fbDistance = OPTIMAL_DISTANCE;
+            fbDistance = sodarCenter->distance();;
             break;
     }
 
@@ -110,13 +110,17 @@ void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, 
         {
             robot->driveLeft();
         }
-        else if (currentAngle == ROBOT_ANGLE_CENTER)
+        else if (currentAngle == ROBOT_ANGLE_CENTER || (currentAngle == ROBOT_ANGLE_NONE && fbDistance < OPTIMAL_DISTANCE))
         {
             robot->percentDrive(percentDistance);
         }
         else if (currentAngle == ROBOT_ANGLE_RIGHT)
         {
             robot->driveRight();
+        }
+        else
+        {
+            robot->stop();
         }
     }
 

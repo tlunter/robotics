@@ -1,8 +1,8 @@
 #include "motor.h"
 #include "robot.h"
 
-#define FAST_SPEED 130
-#define LOW_SPEED 90
+#define FAST_SPEED 255
+#define LOW_SPEED 180
 
 Robot::Robot(Motor *motor_a, Motor *motor_b) : 
     a(motor_a), b(motor_b)
@@ -95,12 +95,12 @@ void Robot::percentDrive(double percent)
 
 void Robot::driveLeft()
 {
-    this->a->drive(-FAST_SPEED);
-    this->b->drive(FAST_SPEED);
+    this->a->drive(LOW_SPEED);
+    this->b->drive(-LOW_SPEED);
 }
 
 void Robot::driveRight()
 {
-    this->a->drive(FAST_SPEED);
-    this->b->drive(-FAST_SPEED);
+    this->a->drive(-LOW_SPEED);
+    this->b->drive(LOW_SPEED);
 }
