@@ -2,12 +2,14 @@
 #include "motor.h"
 #include "robot.h"
 #include "sodar.h"
-#include "sodar_robot.h"
+#include "wall_follower_robot.h"
 
 #define SODAR_DEBUG 1
 #define HISTORY_SIZE 10
 
-void SodarRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
+int *wallSpeed;
+
+void WallFollowerRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
 {
     static double *history = new double[HISTORY_SIZE]();
     static unsigned int historyIndex = 0;
@@ -59,29 +61,34 @@ void SodarRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
     // Make sure the front sonar is not triggering
     if (frontDistance < 12)
     {
-        robot->hard_left();
+        wallSpeed = robot->hard_left();
+        free(wallSpeed);
         return;
     }
 
 
     if (sideDistance < 5 && currentTrajectory <= 0)
     {
-        robot->slight_left();
+        wallSpeed = robot->slight_left();
+        free(wallSpeed);
         return;
     }
 
     if (sideDistance > 10 && currentTrajectory >= 0)
     {
-        robot->slight_right();
+        wallSpeed = robot->slight_right();
+        free(wallSpeed);
         return;
     }
 
     if (sideDistance > 10)
     {
-        robot->slight_right(45);
+        wallSpeed = robot->right(45);
+        free(wallSpeed);
         return;
     }
 
     // manage distance from wall   
-    robot->forward();
+    wallSpeed = robot->forward();
+    free(wallSpeed);
 }

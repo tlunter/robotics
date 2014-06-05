@@ -2,9 +2,11 @@
 #include "motor.h"
 #include "robot.h"
 #include "led_array.h"
-#include "led_robot.h"
+#include "line_follower_robot.h"
 
-void LedRobotLoop(Robot *robot, LedArray *ledArray)
+int *lineSpeed;
+
+void LineFollowerRobotLoop(Robot *robot, LedArray *ledArray)
 {
     static bool seenTape = false;
     switch(ledArray->isTape())
@@ -18,19 +20,22 @@ void LedRobotLoop(Robot *robot, LedArray *ledArray)
         case B10110:
         case B11110:
             Serial.println("Turning left");
-            robot->turn_left();
+            lineSpeed = robot->turn_left();
+            free(lineSpeed);
             seenTape = true;
 
             // if far left LED is tripped, turn left until it un-trips
             while (ledArray->isTape() > 16) {
-                robot->turn_left();
+                lineSpeed = robot->turn_left();
+                free(lineSpeed);
             }
         break;
 
         case B01000:
         case B01100:
             Serial.println("Turn left");
-            robot->turn_left();
+            lineSpeed = robot->turn_left();
+            free(lineSpeed);
             seenTape = true;
         break;
 
@@ -39,14 +44,16 @@ void LedRobotLoop(Robot *robot, LedArray *ledArray)
         case B01110:
         case B11111:
             Serial.println("Forward");
-            robot->forward();
+            lineSpeed = robot->forward();
+            free(lineSpeed);
             seenTape = true;
         break;
 
         case B00010:
         case B00110:
             Serial.println("Turn right");
-            robot->turn_right();
+            lineSpeed = robot->turn_right();
+            free(lineSpeed);
             seenTape = true;
         break;
 
@@ -59,25 +66,28 @@ void LedRobotLoop(Robot *robot, LedArray *ledArray)
         case B01101:
         case B01111:
             Serial.println("Turning right");
-            robot->turn_right();
+            lineSpeed = robot->turn_right();
+            free(lineSpeed);
             seenTape = true;
 
             // if far right LED is tripped, turn right until it un-trips
             while (ledArray->isTape() % 2) {
-                robot->turn_right();
+                lineSpeed = robot->turn_right();
+                free(lineSpeed);
             }
         break;
 
         default:
             if (seenTape)
             {
-                    Serial.println("Keep doing last");
+                Serial.println("Keep doing last");
                 // robot->stop();
             }
             else
             {
                 Serial.println("Go");
-                robot->forward();
+                lineSpeed = robot->forward();
+                free(lineSpeed);
             }
         break;
     }
