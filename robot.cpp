@@ -1,144 +1,106 @@
 #include "motor.h"
 #include "robot.h"
 
-#define FAST_SPEED 130
-#define LOW_SPEED 90
+#define FAST_SPEED 255
+#define LOW_SPEED 180
 
 Robot::Robot(Motor *motor_a, Motor *motor_b) : 
     a(motor_a), b(motor_b)
 {
 }
 
-int* Robot::forward()
+void Robot::forward()
 {
-    int *speed = new int[2]();
-    speed[0] = FAST_SPEED;
-    speed[1] = FAST_SPEED;
-    drive(speed);
-
-    return speed;
+    this->a->drive(FAST_SPEED);
+    this->b->drive(FAST_SPEED);
 }
 
-int* Robot::backward()
+void Robot::backward()
 {
-    int *speed = new int[2]();
-    speed[0] = -FAST_SPEED;
-    speed[1] = -FAST_SPEED;
-    drive(speed);
-
-    return speed;
+    this->a->drive(-FAST_SPEED);
+    this->b->drive(-FAST_SPEED);
 }
 
-int* Robot::stop()
+void Robot::stop()
 {
-    int *speed = new int[2]();
-    drive(speed);
-
-    return speed;
+    this->a->drive(0);
+    this->b->drive(0);
 }
 
-int* Robot::hard_left()
+void Robot::hard_left()
 {
-    int *speed = new int[2]();
-    speed[0] = FAST_SPEED;
-    speed[1] = -80;
-    drive(speed);
-
-    return speed;
+    this->a->drive(FAST_SPEED);
+    this->b->drive(-80);
 }
 
-int* Robot::hard_right()
+void Robot::hard_right()
 {
-    int *speed = new int[2]();
-    speed[0] = -80;
-    speed[1] = FAST_SPEED;
-    drive(speed);
-
-    return speed;
+    this->a->drive(-80);
+    this->b->drive(FAST_SPEED);
 }
 
-int* Robot::turn_left()
+void Robot::turn_left()
 {
-    int *speed = new int[2]();
-    speed[0] = FAST_SPEED;
-    speed[1] = 0;
-    drive(speed);
-
-    return speed;
+    this->a->drive(FAST_SPEED);
+    this->b->drive(0);
 }
 
-int* Robot::turn_right()
+void Robot::turn_right()
 {
-    int *speed = new int[2]();
-    speed[0] = 0;
-    speed[1] = FAST_SPEED;
-    drive(speed);
-
-    return speed;
+    this->a->drive(0);
+    this->b->drive(FAST_SPEED);
 }
 
-int* Robot::slight_left()
+void Robot::slight_left()
 {
-    int *speed = new int[2]();
-    speed[0] = FAST_SPEED;
-    speed[1] = LOW_SPEED;
-    drive(speed);
-
-    return speed;
+    this->a->drive(FAST_SPEED);
+    this->b->drive(LOW_SPEED);
 }
 
-int* Robot::slight_right()
+void Robot::slight_right()
 {
-    int *speed = new int[2]();
-    speed[0] = LOW_SPEED;
-    speed[1] = FAST_SPEED;
-    drive(speed);
-
-    return speed;
+    this->a->drive(LOW_SPEED);
+    this->b->drive(FAST_SPEED);
 }
 
-int* Robot::backward_slight_left()
+void Robot::backward_slight_left()
 {
-    int *speed = new int[2]();
-    speed[0] = -FAST_SPEED;
-    speed[1] = -LOW_SPEED;
-    drive(speed);
-
-    return speed;
+    this->a->drive(-FAST_SPEED);
+    this->b->drive(-LOW_SPEED);
 }
 
-int* Robot::backward_slight_right()
+void Robot::backward_slight_right()
 {
-    int *speed = new int[2]();
-    speed[0] = -LOW_SPEED;
-    speed[1] = -FAST_SPEED;
-    drive(speed);
-
-    return speed;
+    this->a->drive(-LOW_SPEED);
+    this->b->drive(-FAST_SPEED);
 }
 
-int* Robot::left(int pwm)
+void Robot::left(int pwm)
 {
-    int *speed = new int[2]();
-    speed[0] = FAST_SPEED;
-    speed[1] = pwm;
-    drive(speed);
-
-    return speed;
+    this->a->drive(FAST_SPEED);
+    this->b->drive(pwm);
 }
 
-int* Robot::right(int pwm)
+void Robot::right(int pwm)
 {
-    int *speed = new int[2]();
-    speed[0] = pwm;
-    speed[1] = FAST_SPEED;
-    drive(speed);
-
-    return speed;
+    this->a->drive(pwm);
+    this->b->drive(FAST_SPEED);
 }
 
-void Robot::drive(int *speed)
+void Robot::percentDrive(double percent)
 {
-    this->a->drive(speed[0]);
-    this->b->drive(speed[1]);
+    this->a->drive(FAST_SPEED * percent);
+    this->b->drive(FAST_SPEED * percent);
+}
+
+void Robot::driveLeft()
+{
+    this->a->drive(LOW_SPEED);
+    this->b->drive(-LOW_SPEED);
+}
+
+void Robot::driveRight()
+{
+    this->a->drive(-LOW_SPEED);
+    this->b->drive(LOW_SPEED);
 }

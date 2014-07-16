@@ -7,8 +7,6 @@
 #define SODAR_DEBUG 1
 #define HISTORY_SIZE 10
 
-int *wallSpeed;
-
 void WallFollowerRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
 {
     static double *history = new double[HISTORY_SIZE]();
@@ -61,34 +59,29 @@ void WallFollowerRobotLoop(Robot *robot, Sodar *sodarFront, Sodar *sodarSide)
     // Make sure the front sonar is not triggering
     if (frontDistance < 12)
     {
-        wallSpeed = robot->hard_left();
-        free(wallSpeed);
+        robot->hard_left();
         return;
     }
 
 
     if (sideDistance < 5 && currentTrajectory <= 0)
     {
-        wallSpeed = robot->slight_left();
-        free(wallSpeed);
+        robot->slight_left();
         return;
     }
 
     if (sideDistance > 10 && currentTrajectory >= 0)
     {
-        wallSpeed = robot->slight_right();
-        free(wallSpeed);
+        robot->slight_right();
         return;
     }
 
     if (sideDistance > 10)
     {
-        wallSpeed = robot->right(45);
-        free(wallSpeed);
+        robot->right(45);
         return;
     }
 
     // manage distance from wall   
-    wallSpeed = robot->forward();
-    free(wallSpeed);
+    robot->forward();
 }

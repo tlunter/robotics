@@ -56,6 +56,8 @@ void setup(void)
     sodarTwo->init();
     sodarThree->init();
 #endif
+
+    pinMode(13, OUTPUT);
 }
 
 void loop(void)
@@ -67,5 +69,5 @@ void loop(void)
 #elif defined(ROBOT_FOLLOWER)
     RobotFollowerRobotLoop(robot, sodarOne, sodarTwo, sodarThree);
 #endif
-    delay(50);
+    delay(35);
 }

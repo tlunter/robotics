@@ -4,228 +4,133 @@
 #include "sodar.h"
 #include "robot_follower_robot.h"
 
-#define DEBUG
+//#define DEBUG
 #define MIN_DISTANCE 10
 #define MAX_DISTANCE 20
+#define OPTIMAL_DISTANCE ((MAX_DISTANCE + MIN_DISTANCE) / 2)
+#define RANGE_DISTANCE (MAX_DISTANCE - MIN_DISTANCE)
 #define MAX_THRESHOLD 60
-#define SIDE_THRESHOLD 4
 
-#define ENEMY_HISTORY 40
-#define POSSIBLE_DIR_MOVEMENT 2
-#define POSSIBLE_ANGLE_MOVEMENT 3
-#define NUM_CORRECT_TRACKING 2
-
-double centerDistance;
-double leftDistance;
-double rightDistance;
+double fbDistance;
 int historyIndex = 0;
-int *robotSpeed;
-enemy_robot_distance_t enemyDistance[ENEMY_HISTORY] = {ROBOT_DIR_OPTIMAL};
-enemy_robot_angle_t enemyAngle[ENEMY_HISTORY] = {ROBOT_CENTER};
-enemy_robot_distance_t currentDistance;
 enemy_robot_angle_t currentAngle;
+
+enemy_robot_angle_t getCurrentAngle()
+{
+    enemy_robot_angle_t angle = ROBOT_ANGLE_NONE;
+    unsigned char data = 0x40;
+
+    while (Serial.available())
+    {
+        data = (unsigned char)Serial.read();
+    }
+
+    switch (data) {
+        case 0x40:
+            angle = ROBOT_ANGLE_NONE;
+            break;
+        case 0x41:
+            angle = ROBOT_ANGLE_LEFT;
+            break;
+        case 0x42:
+            angle = ROBOT_ANGLE_CENTER;
+            break;
+        case 0x43:
+            angle = ROBOT_ANGLE_RIGHT;
+            break;
+        default:
+            break;
+    }
+
+    return angle;
+}
 
 void RobotFollowerRobotLoop(Robot *robot, Sodar *sodarLeft, Sodar *sodarCenter, Sodar *sodarRight)
 {
-    leftDistance = sodarLeft->distance();
-    delay(10);
-    rightDistance  = sodarRight->distance();
-    delay(10);
-    centerDistance = sodarCenter->distance();
+    // First, get left/right/center val. for now, center
+    currentAngle = getCurrentAngle();
+
+    fbDistance = sodarCenter->distance();;
+
+    //switch (currentAngle)
+    //{
+    //    case ROBOT_ANGLE_LEFT:
+    //        fbDistance = sodarLeft->distance();
+    //        break;
+
+    //    case ROBOT_ANGLE_CENTER:
+    //        fbDistance = sodarCenter->distance();
+    //        break;
+
+    //    case ROBOT_ANGLE_RIGHT:
+    //        fbDistance = sodarRight->distance();
+    //        break;
+
+    //    default:
+    //        break;
+    //}
 
 #if defined(DEBUG)
-    Serial.print("Left: ");
-    Serial.print(leftDistance);
-    Serial.print("\tCenter: ");
-    Serial.print(centerDistance);
-    Serial.print("\tRight: ");
-    Serial.println(rightDistance);
-#endif
+    Serial.print("Sensor: ");
+    Serial.print(currentAngle);
+    Serial.print("\tDistance: ");
+    Serial.print(fbDistance);
 
-    if (centerDistance < MIN_DISTANCE)
+    if (fbDistance < MIN_DISTANCE)
     {
         Serial.print("Too close\t");
-        currentDistance = ROBOT_DIR_CLOSE;
     }
-    else if (centerDistance < MAX_THRESHOLD && centerDistance > MAX_DISTANCE)
+    else if (fbDistance < MAX_THRESHOLD && fbDistance > MAX_DISTANCE)
     {
         Serial.print("Too far\t");
-        currentDistance = ROBOT_DIR_FAR;
     }
     else
     {
+        // even if its past our MAX_THRESHOLD, we report its 'just right' so it stays put while it turns to find it
         Serial.print("Just right\t");
-        currentDistance = ROBOT_DIR_OPTIMAL;
     }
+#endif
 
-    if (abs(leftDistance - rightDistance) < SIDE_THRESHOLD ||
-        (leftDistance > MAX_THRESHOLD &&
-         rightDistance > MAX_THRESHOLD &&
-         centerDistance < MAX_THRESHOLD))
+    if (fbDistance < MAX_THRESHOLD)
     {
-        Serial.print("In Front\t");
-        currentAngle = ROBOT_CENTER;
-    }
-    else if (abs(leftDistance - centerDistance) < SIDE_THRESHOLD &&
-        abs(rightDistance - leftDistance) > SIDE_THRESHOLD &&
-        abs(rightDistance - centerDistance) > SIDE_THRESHOLD)
-    {
-        Serial.print("Front left\t");
-        currentAngle = ROBOT_LEFT_CENTER;
-    }
-    else if (abs(rightDistance - centerDistance) < SIDE_THRESHOLD &&
-        abs(rightDistance - leftDistance) > SIDE_THRESHOLD &&
-        abs(leftDistance - centerDistance) > SIDE_THRESHOLD)
-    {
-        Serial.print("Front right\t");
-        currentAngle = ROBOT_RIGHT_CENTER;
-    }
-    else if (leftDistance < MAX_THRESHOLD &&
-            (centerDistance - leftDistance) > SIDE_THRESHOLD &&
-            (rightDistance - leftDistance) > SIDE_THRESHOLD)
-    {
-        Serial.print("Left\t");
-        currentAngle = ROBOT_LEFT;
-    }
-    else if (rightDistance < MAX_THRESHOLD &&
-            (centerDistance - rightDistance) > SIDE_THRESHOLD &&
-            (leftDistance - rightDistance) > SIDE_THRESHOLD)
-    {
-        Serial.print("Right\t");
-        currentAngle = ROBOT_RIGHT;
-    }
+        if (fbDistance > MAX_DISTANCE)
+        {
+            fbDistance = MAX_DISTANCE;
+        }
+        if (fbDistance < MIN_DISTANCE)
+        {
+            fbDistance = MIN_DISTANCE;
+        }
 
+        double percentDistance;
+        if (fbDistance < (OPTIMAL_DISTANCE - 1))
+            percentDistance = -0.5;
+        else if (fbDistance > (OPTIMAL_DISTANCE + 1))
+            percentDistance = 0.5;
+
+#if defined(DEBUG)
+        Serial.print("\tPD: ");
+        Serial.print(percentDistance);
+#endif
+
+        if (currentAngle == ROBOT_ANGLE_LEFT)
+        {
+            robot->driveLeft();
+        }
+        else if (currentAngle == ROBOT_ANGLE_CENTER || (currentAngle == ROBOT_ANGLE_NONE && fbDistance < OPTIMAL_DISTANCE))
+        {
+            robot->percentDrive(percentDistance);
+        }
+        else if (currentAngle == ROBOT_ANGLE_RIGHT)
+        {
+            robot->driveRight();
+        }
+        else
+        {
+            robot->stop();
+        }
+    }
+#if defined(DEBUG)
     Serial.println();
-
-    int previousHistory = (historyIndex - 1) % ENEMY_HISTORY;
-    enemy_robot_distance_t previousDistance = enemyDistance[previousHistory];
-    enemy_robot_angle_t previousAngle = enemyAngle[previousHistory];
-
-    enemy_robot_distance_t newDistance = ROBOT_DIR_NONE;
-    enemy_robot_angle_t newAngle = ROBOT_NONE;
-
-    if (abs(previousDistance - currentDistance) < 2)
-    {
-        Serial.print("Catching up/Running away\t");
-        enemyDistance[historyIndex] = currentDistance;
-        newDistance = enemyDistance[historyIndex];
-    }
-    else
-    {
-        // Keep repeating previous command
-        Serial.print("Rapid speed change?\t");
-    }
-
-    if (abs(previousAngle - currentAngle) < 3)
-    {
-        Serial.print("Robot is turning\t");
-        enemyAngle[historyIndex] = currentAngle;
-        newAngle = enemyAngle[historyIndex];
-    }
-    else
-    {
-        // Keep repeating previous command
-        Serial.print("Rapid direction change?\t");
-    }
-
-    Serial.println();
-
-    int seenCount = 0;
-    int lastHistoryIndex = historyIndex - ENEMY_HISTORY;
-    for (int i = historyIndex - 1; i > lastHistoryIndex; i--)
-    {
-        if (abs(enemyAngle[i % ENEMY_HISTORY] - newAngle) < POSSIBLE_ANGLE_MOVEMENT &&
-            abs(enemyDistance[i % ENEMY_HISTORY] - newDistance < POSSIBLE_DIR_MOVEMENT))
-        {
-            seenCount++;
-        }
-    }
-
-    if (seenCount >= NUM_CORRECT_TRACKING)
-    {
-        if (newDistance == ROBOT_DIR_FAR)
-        {
-            if (newAngle == ROBOT_LEFT)
-            {
-                robotSpeed = robot->turn_left();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_LEFT_CENTER)
-            {
-                robotSpeed = robot->slight_left();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_CENTER)
-            {
-                robotSpeed = robot->forward();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_RIGHT_CENTER)
-            {
-                robotSpeed = robot->slight_right();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_RIGHT)
-            {
-                robotSpeed = robot->turn_right();
-                free(robotSpeed);
-            }
-        }
-        else if (newDistance == ROBOT_DIR_OPTIMAL)
-        {
-            if (newAngle == ROBOT_LEFT)
-            {
-                robotSpeed = robot->hard_left();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_LEFT_CENTER)
-            {
-                robotSpeed = robot->hard_left();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_CENTER)
-            {
-                robotSpeed = robot->stop();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_RIGHT_CENTER)
-            {
-                robotSpeed = robot->hard_right();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_RIGHT)
-            {
-                robotSpeed = robot->hard_right();
-                free(robotSpeed);
-            }
-        }
-        else if (newDistance == ROBOT_DIR_CLOSE)
-        {
-            if (newAngle == ROBOT_LEFT)
-            {
-                robotSpeed = robot->backward_slight_right();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_LEFT_CENTER)
-            {
-                robotSpeed = robot->backward_slight_right();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_CENTER)
-            {
-                robotSpeed = robot->backward();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_RIGHT_CENTER)
-            {
-                robotSpeed = robot->backward_slight_left();
-                free(robotSpeed);
-            }
-            else if (newAngle == ROBOT_RIGHT)
-            {
-                robotSpeed = robot->backward_slight_left();
-                free(robotSpeed);
-            }
-        }
-    }
+#endif
 }
